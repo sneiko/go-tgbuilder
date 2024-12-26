@@ -3,5 +3,5 @@ package tgui
 import "errors"
 
 var (
-	ErrNotFound = errors.New("menu item not found")
+	ErrNotFound = errors.New("userMenu item not found")
 )

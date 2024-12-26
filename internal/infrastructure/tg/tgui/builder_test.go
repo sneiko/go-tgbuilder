@@ -14,14 +14,14 @@ func TestBuilder_FindByQuery(t *testing.T) {
 		OnClick: func(ctx context.Context, msg *tgbot.Message) error {
 			return nil
 		},
-		Children: []MenuItem{
+		ChildrenRows: []MenuItem{
 			{
 				ID:    "general-p1",
 				Title: "Гланое меню - П1",
 				OnClick: func(ctx context.Context, msg *tgbot.Message) error {
 					return nil
 				},
-				Children: []MenuItem{
+				ChildrenRows: []MenuItem{
 					{
 						ID:    "general-p1-p1",
 						Title: "П1 - П1",
@@ -43,7 +43,7 @@ func TestBuilder_FindByQuery(t *testing.T) {
 				OnClick: func(ctx context.Context, msg *tgbot.Message) error {
 					return nil
 				},
-				Children: []MenuItem{
+				ChildrenRows: []MenuItem{
 					{
 						ID:    "general-p2-p1",
 						Title: "П2 - П1",
@@ -63,14 +63,14 @@ func TestBuilder_FindByQuery(t *testing.T) {
 		},
 	}
 
-	builder := Build(context.Background(), menu)
+	builder := NewBuilder(&menu, nil)
 
-	item, err := builder.FindByQuery("general-p1-p2")
+	item, err := builder.UserMenuFindByID("general-p1-p2")
 	if err != nil {
 		t.Error(err)
 	}
 
 	if item == nil {
-		t.Error("menu item not found")
+		t.Error("userMenu item not found")
 	}
 }

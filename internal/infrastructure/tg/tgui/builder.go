@@ -1,20 +1,31 @@
 package tgui
 
-import "context"
-
 // Builder is a ui/router builder
 type Builder struct {
-	menu MenuItem
+	userMenu  *MenuItem
+	adminMenu *MenuItem
 }
 
-// Build creates a new  ui/router builder
-func Build(ctx context.Context, menu MenuItem) *Builder {
-	return &Builder{menu: menu}
+// NewBuilder creates a new  ui/router builder
+func NewBuilder(userMenu, adminMenu *MenuItem) *Builder {
+	return &Builder{
+		userMenu:  userMenu,
+		adminMenu: adminMenu,
+	}
 }
 
-// FindByQuery finds a menu item by query
-func (b *Builder) FindByQuery(query MenuItemID) (*MenuItem, error) {
-	res := b.menu.FindByQuery(query)
+// UserMenuFindByID finds a userMenu item by query
+func (b *Builder) UserMenuFindByID(id string) (*MenuItem, error) {
+	res := b.userMenu.FindByID(id)
+	if res == nil {
+		return nil, ErrNotFound
+	}
+	return res, nil
+}
+
+// AdminMenuFindByID finds a adminMenu item by query
+func (b *Builder) AdminMenuFindByID(id string) (*MenuItem, error) {
+	res := b.adminMenu.FindByID(id)
 	if res == nil {
 		return nil, ErrNotFound
 	}
