@@ -19,9 +19,10 @@ func Run(ctx context.Context) error {
 
 	ui := tg.NewBuilder(
 		&tg.MenuItem{
-			ID:      "start",
+			ID:      "/start",
 			Title:   "Главное меню",
 			Message: "Выберите пункт меню: ",
+			Inline:  true,
 			ChildrenRows: []tg.MenuItem{
 				{
 					ID:    "information",
@@ -31,14 +32,14 @@ func Run(ctx context.Context) error {
 						{
 							ID:         "bot",
 							Title:      "Назад",
-							RedirectTo: "start",
+							RedirectTo: "/start",
 						},
 					},
 				}, {
 					ID:         "action",
 					Row:        0,
 					Title:      "События 🚀",
-					RedirectTo: "start",
+					RedirectTo: "/start",
 				}, {
 					ID:    "qa",
 					Row:   1,

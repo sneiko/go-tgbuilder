@@ -6,15 +6,15 @@ import (
 
 // Message represents a message
 type Message struct {
-	*tgbotapi.Message
+	*tgbotapi.Update
 	bot     *tgbotapi.BotAPI
 	builder *Builder
 }
 
 // NewMessage creates a new message
-func NewMessage(bot *tgbotapi.BotAPI, builder *Builder, msg *tgbotapi.Message) *Message {
+func NewMessage(bot *tgbotapi.BotAPI, builder *Builder, update *tgbotapi.Update) *Message {
 	return &Message{
-		Message: msg,
+		Update:  update,
 		bot:     bot,
 		builder: builder,
 	}
@@ -22,11 +22,29 @@ func NewMessage(bot *tgbotapi.BotAPI, builder *Builder, msg *tgbotapi.Message) *
 
 // Text returns the text of the message
 func (m *Message) Text() string {
-	return m.Message.Text
+	if m.Message != nil {
+		return m.Message.Text
+	}
+
+	if m.CallbackQuery != nil {
+		return m.CallbackQuery.Data
+	}
+
+	return ""
 }
 
 // ChatID returns the chat ID
-func (m *Message) ChatID() int64 { return m.Message.Chat.ID }
+func (m *Message) ChatID() int64 {
+	if m.Message != nil {
+		return m.Message.Chat.ID
+	}
+
+	if m.CallbackQuery != nil {
+		return m.CallbackQuery.Message.Chat.ID
+	}
+
+	return -1
+}
 
 // SendText sends a text message
 func (m *Message) SendText(text string) error {

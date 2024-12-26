@@ -52,36 +52,52 @@ func (b *Bot) handleUpdates(ctx context.Context) error {
 			return nil
 		}
 
-		if update.Message == nil {
+		var (
+			chatID   int64
+			text     string
+			username string
+		)
+
+		if update.Message != nil || update.CallbackQuery != nil {
+			if update.Message != nil {
+				chatID = update.Message.Chat.ID
+				text = update.Message.Text
+				username = update.Message.From.UserName
+			} else {
+				chatID = update.CallbackQuery.Message.Chat.ID
+				text = update.CallbackQuery.Data
+				username = update.CallbackQuery.From.UserName
+			}
+		} else {
 			continue
 		}
 
 		slog.Info("handle message",
-			slog.Int64("chat_id", update.Message.Chat.ID),
-			slog.String("username", update.Message.From.UserName),
-			slog.String("text", update.Message.Text))
+			slog.Int64("chat_id", chatID),
+			slog.String("username", username),
+			slog.String("text", text))
 
-		menu, err := b.ui.UserMenuFindByQuery(update.Message.Text)
+		menu, err := b.ui.UserMenuFindByQuery(text)
 		if err != nil {
 			slog.Error("UserMenuFindByQuery - handle menu call",
-				slog.String("text", update.Message.Text),
+				slog.String("text", text),
 				slog.String("error", err.Error()))
 			continue
 		}
 
 		if menu.OnClick != nil {
-			tMsg := NewMessage(b.bot, b.ui, update.Message)
+			tMsg := NewMessage(b.bot, b.ui, &update)
 			if err := menu.OnClick(ctx, tMsg); err != nil {
 				slog.Error("OnClick - handle menu call",
-					slog.String("text", update.Message.Text),
+					slog.String("text", text),
 					slog.String("error", err.Error()))
 			}
 			continue
 		}
 
-		if err := b.makeAnswer(update.Message.Chat.ID, menu); err != nil {
+		if err := b.makeAnswer(chatID, menu); err != nil {
 			slog.Error("makeAnswer - handle menu call",
-				slog.String("text", update.Message.Text),
+				slog.String("text", text),
 				slog.String("error", err.Error()))
 			continue
 		}
