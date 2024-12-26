@@ -1,38 +1,36 @@
-package tgui
+package tg
 
 import (
 	"context"
 	"testing"
-
-	"tg_star_miner/internal/infrastructure/tg/tgbot"
 )
 
 func TestBuilder_FindByQuery(t *testing.T) {
 	menu := MenuItem{
 		ID:    "general",
 		Title: "Главное меню",
-		OnClick: func(ctx context.Context, msg *tgbot.Message) error {
+		OnClick: func(ctx context.Context, msg *Message) error {
 			return nil
 		},
 		ChildrenRows: []MenuItem{
 			{
 				ID:    "general-p1",
 				Title: "Гланое меню - П1",
-				OnClick: func(ctx context.Context, msg *tgbot.Message) error {
+				OnClick: func(ctx context.Context, msg *Message) error {
 					return nil
 				},
 				ChildrenRows: []MenuItem{
 					{
 						ID:    "general-p1-p1",
 						Title: "П1 - П1",
-						OnClick: func(ctx context.Context, msg *tgbot.Message) error {
+						OnClick: func(ctx context.Context, msg *Message) error {
 							return nil
 						},
 					},
 					{
 						ID:    "general-p1-p2",
 						Title: "П1 - П2",
-						OnClick: func(ctx context.Context, msg *tgbot.Message) error {
+						OnClick: func(ctx context.Context, msg *Message) error {
 							return nil
 						},
 					},
@@ -40,21 +38,21 @@ func TestBuilder_FindByQuery(t *testing.T) {
 			}, {
 				ID:    "general-p2",
 				Title: "Гланое меню - П2",
-				OnClick: func(ctx context.Context, msg *tgbot.Message) error {
+				OnClick: func(ctx context.Context, msg *Message) error {
 					return nil
 				},
 				ChildrenRows: []MenuItem{
 					{
 						ID:    "general-p2-p1",
 						Title: "П2 - П1",
-						OnClick: func(ctx context.Context, msg *tgbot.Message) error {
+						OnClick: func(ctx context.Context, msg *Message) error {
 							return nil
 						},
 					},
 					{
 						ID:    "general-p2-p1",
 						Title: "П2 - П2",
-						OnClick: func(ctx context.Context, msg *tgbot.Message) error {
+						OnClick: func(ctx context.Context, msg *Message) error {
 							return nil
 						},
 					},

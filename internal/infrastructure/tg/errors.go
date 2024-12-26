@@ -1,4 +1,4 @@
-package tgui
+package tg
 
 import "errors"
 

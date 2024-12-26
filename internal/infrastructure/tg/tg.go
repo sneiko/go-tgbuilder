@@ -6,16 +6,14 @@ import (
 	"log/slog"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-
-	"tg_star_miner/internal/infrastructure/tg/tgui"
 )
 
 type Bot struct {
 	bot *tgbotapi.BotAPI
-	ui  *tgui.Builder
+	ui  *Builder
 }
 
-func NewBot(token string, isDebug bool, ui *tgui.Builder) *Bot {
+func NewBot(token string, isDebug bool, ui *Builder) *Bot {
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		panic(err)
@@ -31,9 +29,7 @@ func NewBot(token string, isDebug bool, ui *tgui.Builder) *Bot {
 	}
 }
 
-func (b *Bot) GetBot() *tgbotapi.BotAPI {
-	return b.bot
-}
+func (b *Bot) GetBot() *tgbotapi.BotAPI { return b.bot }
 
 func (b *Bot) Run(ctx context.Context) error {
 	if err := b.handleUpdates(ctx); err != nil {
@@ -43,73 +39,85 @@ func (b *Bot) Run(ctx context.Context) error {
 	return nil
 }
 
+// handleUpdates is a long-polling method for check update for bot
 func (b *Bot) handleUpdates(ctx context.Context) error {
-	updateCfg := tgbotapi.NewUpdate(0)
-	updateCfg.Timeout = 60
+	u := tgbotapi.NewUpdate(0)
+	u.Timeout = 60
 
-	for {
-		select {
-		case <-ctx.Done():
-			slog.Info("handle updates", slog.String("reason", ctx.Err().Error()))
+	updates := b.bot.GetUpdatesChan(u)
+
+	for update := range updates {
+		if ctx.Err() != nil {
+			slog.Info("tg_updates close context updates", slog.String("error", ctx.Err().Error()))
 			return nil
+		}
 
-		case update := <-b.bot.GetUpdatesChan(updateCfg):
-			if update.Message == nil {
-				continue
-			}
+		if update.Message == nil {
+			continue
+		}
 
-			if update.Message.IsCommand() {
-				cmd := update.Message.Command()
+		slog.Info("handle message",
+			slog.Int64("chat_id", update.Message.Chat.ID),
+			slog.String("username", update.Message.From.UserName),
+			slog.String("text", update.Message.Text))
 
-				slog.Info("handle menu command",
-					slog.Int64("chat_id", update.Message.Chat.ID),
-					slog.String("username", update.Message.From.UserName),
+		menu, err := b.ui.UserMenuFindByQuery(update.Message.Text)
+		if err != nil {
+			slog.Error("UserMenuFindByQuery - handle menu call",
+				slog.String("text", update.Message.Text),
+				slog.String("error", err.Error()))
+			continue
+		}
+
+		if menu.OnClick != nil {
+			tMsg := NewMessage(b.bot, b.ui, update.Message)
+			if err := menu.OnClick(ctx, tMsg); err != nil {
+				slog.Error("OnClick - handle menu call",
 					slog.String("text", update.Message.Text),
-					slog.String("command", update.Message.Command()))
-
-				menu, err := b.ui.UserMenuFindByID(cmd)
-				if err != nil {
-					slog.Error("handle menu command",
-						slog.String("command", update.Message.Command()),
-						slog.String("error", err.Error()))
-					continue
-				}
-
-				if err := b.makeAnswer(update.Message.Chat.ID, menu); err != nil {
-					slog.Error("handle menu command",
-						slog.String("command", update.Message.Command()),
-						slog.String("error", err.Error()))
-					continue
-				}
+					slog.String("error", err.Error()))
 			}
+			continue
+		}
+
+		if err := b.makeAnswer(update.Message.Chat.ID, menu); err != nil {
+			slog.Error("makeAnswer - handle menu call",
+				slog.String("text", update.Message.Text),
+				slog.String("error", err.Error()))
+			continue
 		}
 	}
+	return nil
 }
 
-func (b *Bot) makeAnswer(chatID int64, menu *tgui.MenuItem) error {
-	var (
-		msg tgbotapi.MessageConfig
-	)
+// makeAnswer sends a message to the user
+func (b *Bot) makeAnswer(chatID int64, curMenu *MenuItem) error {
+	var msg tgbotapi.MessageConfig
 
-	if menu.CheckRedirect() {
-		menu, err := b.ui.UserMenuFindByID(string(menu.RedirectTo))
+	if curMenu.CheckRedirect() {
+		newMenu, err := b.ui.UserMenuFindByQuery(curMenu.RedirectTo)
 		if err != nil {
-			return fmt.Errorf("redirect menu: %w", err)
+			return fmt.Errorf("UserMenuFindByQuery - %w", err)
 		}
 
-		msg = tgbotapi.NewMessage(chatID, menu.Message)
+		msg = tgbotapi.NewMessage(chatID, curMenu.Message)
+
+		curMenu = newMenu
 	} else {
-		msg = tgbotapi.NewMessage(chatID, menu.Message)
+		msg = tgbotapi.NewMessage(chatID, curMenu.Message)
 	}
 
-	if menu.Inline {
-		msg.ReplyMarkup = menu.InlineKeyboard()
+	if curMenu.Inline {
+		msg.ReplyMarkup = curMenu.InlineKeyboard()
 	} else {
-		msg.ReplyMarkup = menu.ReplyKeyboard()
+		msg.ReplyMarkup = curMenu.ReplyKeyboard()
+	}
+
+	if msg.Text == "" {
+		msg.Text = "Выберите пункт меню: "
 	}
 
 	if _, err := b.bot.Send(msg); err != nil {
-		return fmt.Errorf("send menu: %w", err)
+		return fmt.Errorf("bot send menu: %w", err)
 	}
 	return nil
 }

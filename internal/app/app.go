@@ -5,48 +5,53 @@ import (
 	"log/slog"
 
 	"tg_star_miner/internal/infrastructure/tg"
-	"tg_star_miner/internal/infrastructure/tg/tgbot"
-	"tg_star_miner/internal/infrastructure/tg/tgui"
 )
 
 const (
 	TgBotToken = "7774772315:AAEujlPzxB0c3PV2im4W0_oyXAazHd5MXRg"
 )
 
+var (
+	AdminIds = []int64{7774772315}
+)
+
 func Run(ctx context.Context) error {
 
-	ui := tgui.NewBuilder(
-		&tgui.MenuItem{
+	ui := tg.NewBuilder(
+		&tg.MenuItem{
 			ID:      "start",
-			Row:     0,
 			Title:   "Главное меню",
 			Message: "Выберите пункт меню: ",
-			Inline:  true,
-			OnClick: nil,
-			ChildrenRows: []tgui.MenuItem{
+			ChildrenRows: []tg.MenuItem{
 				{
-					ID:           "information",
-					Row:          0,
-					Title:        "Информация 🚀",
-					OnClick:      nil,
-					ChildrenRows: nil,
+					ID:    "information",
+					Row:   0,
+					Title: "Информация 🚀",
+					ChildrenRows: []tg.MenuItem{
+						{
+							ID:         "bot",
+							Title:      "Назад",
+							RedirectTo: "start",
+						},
+					},
 				}, {
-					ID:           "action",
-					Row:          0,
-					Title:        "События 🚀",
-					RedirectTo:   "start",
-					OnClick:      nil,
-					ChildrenRows: nil,
+					ID:         "action",
+					Row:        0,
+					Title:      "События 🚀",
+					RedirectTo: "start",
 				}, {
 					ID:    "qa",
 					Row:   1,
 					Title: "Q/A 🚀",
-					OnClick: func(ctx context.Context, msg *tgbot.Message) error {
-						slog.Info("handle menu command",
+					OnClick: func(ctx context.Context, msg *tg.Message) error {
+						slog.Info("Q/A menu command",
 							slog.String("command", msg.Text()))
+
+						if err := msg.SendText("Q/A"); err != nil {
+							return err
+						}
 						return nil
 					},
-					ChildrenRows: nil,
 				},
 			},
 		}, nil)
