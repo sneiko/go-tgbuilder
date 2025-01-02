@@ -14,14 +14,14 @@ type MenuItemID string
 
 // MenuItem represents a userMenu item
 type MenuItem struct {
-	ID           MenuItemID
-	Row          int
-	Title        string
-	Message      string
-	Inline       bool
-	RedirectTo   string // redirect to another menu by Message field
-	OnClick      MenuItemOnClick
-	ChildrenRows []MenuItem
+	ID           MenuItemID      // ID of a menu item for search
+	Row          int             // Row of a menu item
+	Title        string          // Title of a menu item
+	Message      string          // Message text || redirect id for inline menu
+	Inline       bool            // Inline if true use as inline else reply
+	RedirectTo   string          // RedirectTo another menu by Message field
+	OnClick      MenuItemOnClick // OnClick event func for handle click btn
+	ChildrenRows []MenuItem      // ChildrenRows items of a menu
 }
 
 // CheckRedirect checks if a menu item need to be redirected

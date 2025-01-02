@@ -71,7 +71,7 @@ func (m *Message) SendMenuItem(id string) error {
 	}
 
 	if msg.Text == "" {
-		msg.Text = "Выберите пункт меню: "
+		msg.Text = "⤵️"
 	}
 
 	_, err = m.bot.Send(msg)

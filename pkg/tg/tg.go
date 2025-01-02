@@ -6,14 +6,20 @@ import (
 	"log/slog"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+
+	"tg_star_miner/pkg/tgfsm"
+	"tg_star_miner/pkg/tgfsm/fsmdb"
 )
 
+// Bot is a tg bot
 type Bot struct {
 	bot *tgbotapi.BotAPI
+	fsm *tgfsm.Manager
 	ui  *Builder
 }
 
-func NewBot(token string, isDebug bool, ui *Builder) *Bot {
+// NewBot creates a new tg bot
+func NewBot(token string, isDebug bool, ui *Builder, fsm *tgfsm.Manager) *Bot {
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		panic(err)
@@ -23,14 +29,22 @@ func NewBot(token string, isDebug bool, ui *Builder) *Bot {
 
 	slog.Info("Authorized on account", slog.String("username", bot.Self.UserName))
 
+	if fsm == nil {
+		fsm = tgfsm.New(fsmdb.NewInMem())
+		slog.Warn("fsm for tg use in memory mode")
+	}
+
 	return &Bot{
 		bot: bot,
 		ui:  ui,
+		fsm: fsm,
 	}
 }
 
+// GetBot returns the tg bot
 func (b *Bot) GetBot() *tgbotapi.BotAPI { return b.bot }
 
+// Run starts the listen update for bot
 func (b *Bot) Run(ctx context.Context) error {
 	if err := b.handleUpdates(ctx); err != nil {
 		slog.Error("handle updates", slog.String("error", err.Error()))
@@ -95,6 +109,10 @@ func (b *Bot) handleUpdates(ctx context.Context) error {
 			continue
 		}
 
+		// TODO: implement fsm
+		// ctx, _ := context.WithTimeout(context.Background(), 2*time.Second)
+		//	b.fsm.SaveKeyFrame(ctx, curMenu., curMenu.ID)
+
 		if err := b.makeAnswer(chatID, menu); err != nil {
 			slog.Error("makeAnswer - handle menu call",
 				slog.String("text", text),
@@ -135,5 +153,6 @@ func (b *Bot) makeAnswer(chatID int64, curMenu *MenuItem) error {
 	if _, err := b.bot.Send(msg); err != nil {
 		return fmt.Errorf("bot send menu: %w", err)
 	}
+
 	return nil
 }

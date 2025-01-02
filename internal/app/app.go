@@ -4,7 +4,7 @@ import (
 	"context"
 	"log/slog"
 
-	"tg_star_miner/internal/infrastructure/tg"
+	tg2 "tg_star_miner/pkg/tg"
 )
 
 const (
@@ -17,18 +17,18 @@ var (
 
 func Run(ctx context.Context) error {
 
-	ui := tg.NewBuilder(
-		&tg.MenuItem{
+	ui := tg2.NewBuilder(
+		&tg2.MenuItem{
 			ID:      "/start",
 			Title:   "Главное меню",
 			Message: "Выберите пункт меню: ",
 			Inline:  true,
-			ChildrenRows: []tg.MenuItem{
+			ChildrenRows: []tg2.MenuItem{
 				{
 					ID:    "information",
 					Row:   0,
 					Title: "Информация 🚀",
-					ChildrenRows: []tg.MenuItem{
+					ChildrenRows: []tg2.MenuItem{
 						{
 							ID:         "bot",
 							Title:      "Назад",
@@ -44,7 +44,7 @@ func Run(ctx context.Context) error {
 					ID:    "qa",
 					Row:   1,
 					Title: "Q/A 🚀",
-					OnClick: func(ctx context.Context, msg *tg.Message) error {
+					OnClick: func(ctx context.Context, msg *tg2.Message) error {
 						slog.Info("Q/A menu command",
 							slog.String("command", msg.Text()))
 
@@ -57,5 +57,5 @@ func Run(ctx context.Context) error {
 			},
 		}, nil)
 
-	return tg.NewBot(TgBotToken, false, ui).Run(ctx)
+	return tg2.NewBot(TgBotToken, false, ui).Run(ctx)
 }
