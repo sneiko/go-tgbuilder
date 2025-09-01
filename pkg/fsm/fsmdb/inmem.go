@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/google/uuid"
-
-	"tg_star_miner/pkg/tgfsm/fsmmodel"
+	"tg_star_miner/pkg/fsm/fsmmodel"
 )
 
 // InMem db
@@ -23,7 +21,7 @@ func NewInMem() *InMem {
 }
 
 // GetUser from db
-func (r *InMem) GetUser(_ context.Context, id uuid.UUID) (*fsmmodel.User, error) {
+func (r *InMem) GetUser(_ context.Context, id string) (*fsmmodel.User, error) {
 	d, ok := r.users.Load(id)
 	if ok {
 		return d.(*fsmmodel.User), nil
@@ -33,7 +31,7 @@ func (r *InMem) GetUser(_ context.Context, id uuid.UUID) (*fsmmodel.User, error)
 }
 
 // SaveKeyFrame to db
-func (r *InMem) SaveKeyFrame(_ context.Context, id uuid.UUID, keyFrame string) error {
+func (r *InMem) SaveKeyFrame(_ context.Context, id, keyFrame string) error {
 	r.users.Store(id, &fsmmodel.User{ID: id, KeyFrame: keyFrame})
 	return nil
 }

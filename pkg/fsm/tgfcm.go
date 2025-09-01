@@ -1,17 +1,15 @@
-package tgfsm
+package fsm
 
 import (
 	"context"
 
-	"github.com/google/uuid"
-
-	"tg_star_miner/pkg/tgfsm/fsmmodel"
+	"tg_star_miner/pkg/fsm/fsmmodel"
 )
 
 // Storage interface for implementation storage
 type Storage interface {
-	GetUser(ctx context.Context, id uuid.UUID) (*fsmmodel.User, error)
-	SaveKeyFrame(ctx context.Context, id uuid.UUID, keyFrame string) error
+	GetUser(ctx context.Context, id string) (*fsmmodel.User, error)
+	SaveKeyFrame(ctx context.Context, id string, keyFrame string) error
 }
 
 // Manager state machine for telegram
@@ -27,11 +25,11 @@ func New(storage Storage) *Manager {
 }
 
 // GetUser from db
-func (s *Manager) GetUser(ctx context.Context, id uuid.UUID) (*fsmmodel.User, error) {
+func (s *Manager) GetUser(ctx context.Context, id string) (*fsmmodel.User, error) {
 	return s.storage.GetUser(ctx, id)
 }
 
 // SaveKeyFrame to db
-func (s *Manager) SaveKeyFrame(ctx context.Context, id uuid.UUID, keyFrame string) error {
+func (s *Manager) SaveKeyFrame(ctx context.Context, id string, keyFrame string) error {
 	return s.storage.SaveKeyFrame(ctx, id, keyFrame)
 }

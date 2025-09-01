@@ -1,10 +1,12 @@
-package app
+package simple_menu
 
 import (
 	"context"
 	"log/slog"
 
-	tg2 "tg_star_miner/pkg/tg"
+	"tg_star_miner/pkg/fsm"
+	"tg_star_miner/pkg/fsm/fsmdb"
+	"tg_star_miner/pkg/tg"
 )
 
 const (
@@ -16,23 +18,31 @@ var (
 )
 
 func Run(ctx context.Context) error {
+	fsm := fsm.New(fsmdb.NewInMem())
 
-	ui := tg2.NewBuilder(
-		&tg2.MenuItem{
+	ui := tg.NewBuilder(
+		&tg.MenuItem{
 			ID:      "/start",
 			Title:   "Главное меню",
 			Message: "Выберите пункт меню: ",
 			Inline:  true,
-			ChildrenRows: []tg2.MenuItem{
+			ChildrenRows: []tg.MenuItem{
 				{
-					ID:    "information",
-					Row:   0,
-					Title: "Информация 🚀",
-					ChildrenRows: []tg2.MenuItem{
+					ID:     "information",
+					Row:    0,
+					Title:  "Информация 🚀",
+					Inline: true,
+					ChildrenRows: []tg.MenuItem{
 						{
 							ID:         "bot",
 							Title:      "Назад",
 							RedirectTo: "/start",
+						}, {
+							ID:    "admin",
+							Title: "admin test",
+						}, {
+							ID:    "test",
+							Title: "test",
 						},
 					},
 				}, {
@@ -44,7 +54,7 @@ func Run(ctx context.Context) error {
 					ID:    "qa",
 					Row:   1,
 					Title: "Q/A 🚀",
-					OnClick: func(ctx context.Context, msg *tg2.Message) error {
+					OnClick: func(ctx context.Context, msg *tg.Message) error {
 						slog.Info("Q/A menu command",
 							slog.String("command", msg.Text()))
 
@@ -57,5 +67,5 @@ func Run(ctx context.Context) error {
 			},
 		}, nil)
 
-	return tg2.NewBot(TgBotToken, false, ui).Run(ctx)
+	return tg.NewBot(TgBotToken, false, ui, fsm).Run(ctx)
 }

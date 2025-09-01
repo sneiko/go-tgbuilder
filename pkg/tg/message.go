@@ -52,28 +52,3 @@ func (m *Message) SendText(text string) error {
 	_, err := m.bot.Send(msg)
 	return err
 }
-
-// SendMenuItem sends a menu item
-func (m *Message) SendMenuItem(id string) error {
-	menu, err := m.builder.UserMenuFindByID(id)
-	if err != nil {
-		menu, err = m.builder.AdminMenuFindByID(id)
-		if err != nil {
-			return err
-		}
-	}
-	msg := tgbotapi.NewMessage(m.ChatID(), menu.Message)
-
-	if menu.Inline {
-		msg.ReplyMarkup = menu.InlineKeyboard()
-	} else {
-		msg.ReplyMarkup = menu.ReplyKeyboard()
-	}
-
-	if msg.Text == "" {
-		msg.Text = "⤵️"
-	}
-
-	_, err = m.bot.Send(msg)
-	return err
-}

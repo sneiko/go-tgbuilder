@@ -4,13 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 
-	"tg_star_miner/pkg/tgfsm/fsmmodel"
+	"tg_star_miner/pkg/fsm/fsmmodel"
 )
 
-func keyUser(id uuid.UUID) string { return fmt.Sprintf("user:%s", id.String()) }
+func keyUser(id string) string { return fmt.Sprintf("user:%s", id) }
 
 // Redis db
 type Redis struct {
@@ -23,7 +22,7 @@ func NewRedis(opts redis.Options) *Redis {
 	}
 }
 
-func (r *Redis) GetUser(ctx context.Context, id uuid.UUID) (*fsmmodel.User, error) {
+func (r *Redis) GetUser(ctx context.Context, id string) (*fsmmodel.User, error) {
 	var user *fsmmodel.User
 
 	res := r.client.Get(ctx, keyUser(id))
@@ -34,7 +33,7 @@ func (r *Redis) GetUser(ctx context.Context, id uuid.UUID) (*fsmmodel.User, erro
 	return user, nil
 }
 
-func (r *Redis) SaveKeyFrame(ctx context.Context, id uuid.UUID, keyFrame string) error {
+func (r *Redis) SaveKeyFrame(ctx context.Context, id string, keyFrame string) error {
 	return r.client.Set(ctx, keyUser(id), fsmmodel.User{
 		ID:       id,
 		KeyFrame: keyFrame,

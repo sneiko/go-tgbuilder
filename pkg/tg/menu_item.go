@@ -69,8 +69,10 @@ func (m *MenuItem) FindByMsg(text string) *MenuItem {
 		if child.Title == text {
 			return &child
 		}
-		if child.FindByMsg(text) != nil {
-			return child.FindByMsg(text)
+
+		childItem := child.FindByMsg(text)
+		if childItem != nil {
+			return childItem
 		}
 	}
 	return nil
@@ -99,22 +101,20 @@ func (m *MenuItem) InlineKeyboard() tgbotapi.InlineKeyboardMarkup {
 	return tgbotapi.NewInlineKeyboardMarkup(keyboard...)
 }
 
-// ReplyKeyboard builds inline a keyboard from a menu item
+// ReplyKeyboard builds a reply keyboard from a menu item
 func (m *MenuItem) ReplyKeyboard() tgbotapi.ReplyKeyboardMarkup {
+	rows := make(map[int][]tgbotapi.KeyboardButton)
+
+	for _, item := range m.ChildrenRows {
+		rows[item.Row] = append(rows[item.Row], tgbotapi.NewKeyboardButton(item.Title))
+	}
+
 	var keyboard [][]tgbotapi.KeyboardButton
-
-	for idx := range m.ChildrenRows {
-		var keyboardRow []tgbotapi.KeyboardButton
-		for _, item := range m.ChildrenRows {
-			if item.Row != idx {
-				continue
-			}
-
-			keyboardRow = append(keyboardRow, tgbotapi.NewKeyboardButton(item.Title))
-		}
-
-		if len(keyboardRow) != 0 {
-			keyboard = append(keyboard, tgbotapi.NewKeyboardButtonRow(keyboardRow...))
+	for rowIdx := 0; ; rowIdx++ {
+		if buttons, exists := rows[rowIdx]; exists {
+			keyboard = append(keyboard, buttons)
+		} else {
+			break
 		}
 	}
 

@@ -7,8 +7,7 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
-	"tg_star_miner/pkg/tgfsm"
-	"tg_star_miner/pkg/tgfsm/fsmdb"
+	tgfsm "tg_star_miner/pkg/fsm"
 )
 
 // Bot is a tg bot
@@ -28,11 +27,6 @@ func NewBot(token string, isDebug bool, ui *Builder, fsm *tgfsm.Manager) *Bot {
 	bot.Debug = isDebug
 
 	slog.Info("Authorized on account", slog.String("username", bot.Self.UserName))
-
-	if fsm == nil {
-		fsm = tgfsm.New(fsmdb.NewInMem())
-		slog.Warn("fsm for tg use in memory mode")
-	}
 
 	return &Bot{
 		bot: bot,
