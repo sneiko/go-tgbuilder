@@ -6,7 +6,7 @@ import (
 
 	"github.com/redis/go-redis/v9"
 
-	"tg_star_miner/pkg/fsm/fsmmodel"
+	"github.com/sneiko/go-tgbuilder/pkg/fsm/fsmmodel"
 )
 
 func keyUser(id string) string { return fmt.Sprintf("user:%s", id) }

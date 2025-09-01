@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync"
 
-	"tg_star_miner/pkg/fsm/fsmmodel"
+	"github.com/sneiko/go-tgbuilder/pkg/fsm/fsmmodel"
 )
 
 // InMem db

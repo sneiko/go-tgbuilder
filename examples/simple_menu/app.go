@@ -1,12 +1,12 @@
-package simple_menu
+package main
 
 import (
 	"context"
 	"log/slog"
 
-	"tg_star_miner/pkg/fsm"
-	"tg_star_miner/pkg/fsm/fsmdb"
-	"tg_star_miner/pkg/tg"
+	"github.com/sneiko/go-tgbuilder/pkg/fsm"
+	"github.com/sneiko/go-tgbuilder/pkg/fsm/fsmdb"
+	"github.com/sneiko/go-tgbuilder/pkg/tg"
 )
 
 const (

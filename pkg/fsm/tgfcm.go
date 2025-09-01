@@ -3,7 +3,7 @@ package fsm
 import (
 	"context"
 
-	"tg_star_miner/pkg/fsm/fsmmodel"
+	"github.com/sneiko/go-tgbuilder/pkg/fsm/fsmmodel"
 )
 
 // Storage interface for implementation storage
