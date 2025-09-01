@@ -14,7 +14,7 @@ Ideal for bots with multi-level menus, FAQs, admin panels, and interactive workf
 - 🌐 Tree-based menu system with nested items
 - 🔘 Flexible inline and reply keyboard generation
 - 🔗 Redirects between menu items
-- 🧠 Built-in FSM with pluggable storage (in-memory / Redis)
+- 🧠 [in_progress] Built-in FSM with pluggable storage (in-memory / Redis) 
 - 🔌 Simple `OnClick` event handlers
 - 🛠️ Modular, extensible, and easy to test
 - 📦 Pure Go, minimal dependencies, no magic
@@ -30,23 +30,9 @@ go get github.com/sneiko/go-tgbuilder
 ## 🚀 Quick Start
 
 ```go
-package main
-
-import (
-	"context"
-	"log/slog"
-
-	"github.com/sneiko/go-tgbuilder/pkg/tgbot"
-	"github.com/sneiko/go-tgbuilder/pkg/tgfsm"
-	"github.com/sneiko/go-tgbuilder/pkg/tgfsmdb"
-)
-
-const TgBotToken = "YOUR_BOT_TOKEN"
-
 func main() {
 	ctx := context.Background()
 
-	// FSM with in-memory storage (Redis available too)
 	fsm := tgfsm.New(tgfsmdb.NewInMem())
 
 	// Build your menu

@@ -7,7 +7,7 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
-	tgfsm "github.com/sneiko/go-tgbuilder/pkg/tgfsm"
+	"github.com/sneiko/go-tgbuilder/pkg/tgfsm"
 )
 
 // Bot is a tgbot bot
@@ -103,9 +103,15 @@ func (b *Bot) handleUpdates(ctx context.Context) error {
 			continue
 		}
 
-		// TODO: implement fsm
-		// ctx, _ := context.WithTimeout(context.Background(), 2*time.Second)
-		//	b.fsm.SaveKeyFrame(ctx, curMenu., curMenu.ID)
+		//if b.fsm != nil {
+		//	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+		//	defer cancel()
+		//
+		//	chatIDStr := strconv.FormatInt(chatID, 10)
+		//	if err := b.fsm.SaveKeyFrame(ctx, chatIDStr, ""); err != nil {
+		//		slog.Error("SaveKeyFrame - handle menu call")
+		//	}
+		//}
 
 		if err := b.makeAnswer(chatID, menu); err != nil {
 			slog.Error("makeAnswer - handle menu call",

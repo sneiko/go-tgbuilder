@@ -13,10 +13,6 @@ const (
 	TgBotToken = "7774772315:AAEujlPzxB0c3PV2im4W0_oyXAazHd5MXRg"
 )
 
-var (
-	AdminIds = []int64{7774772315}
-)
-
 func Run(ctx context.Context) error {
 	fsm := tgfsm.New(tgfsmdb.NewInMem())
 
@@ -38,11 +34,11 @@ func Run(ctx context.Context) error {
 							Title:      "Назад",
 							RedirectTo: "/start",
 						}, {
-							ID:    "admin",
-							Title: "admin test",
+							ID:    "test-1",
+							Title: "test 1",
 						}, {
-							ID:    "test",
-							Title: "test",
+							ID:    "test-2",
+							Title: "test 2",
 						},
 					},
 				}, {
