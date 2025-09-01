@@ -1,4 +1,4 @@
-package fsmmodel
+package tgfsm
 
 type User struct {
 	ID       string `json:"id"`

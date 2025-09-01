@@ -1,11 +1,11 @@
-package fsmdb
+package tgfsmdb
 
 import (
 	"context"
 	"fmt"
 	"sync"
 
-	"github.com/sneiko/go-tgbuilder/pkg/fsm/fsmmodel"
+	"github.com/sneiko/go-tgbuilder/pkg/tgfsm"
 )
 
 // InMem db
@@ -21,10 +21,10 @@ func NewInMem() *InMem {
 }
 
 // GetUser from db
-func (r *InMem) GetUser(_ context.Context, id string) (*fsmmodel.User, error) {
+func (r *InMem) GetUser(_ context.Context, id string) (*tgfsm.User, error) {
 	d, ok := r.users.Load(id)
 	if ok {
-		return d.(*fsmmodel.User), nil
+		return d.(*tgfsm.User), nil
 	}
 
 	return nil, fmt.Errorf("user not found")
@@ -32,6 +32,6 @@ func (r *InMem) GetUser(_ context.Context, id string) (*fsmmodel.User, error) {
 
 // SaveKeyFrame to db
 func (r *InMem) SaveKeyFrame(_ context.Context, id, keyFrame string) error {
-	r.users.Store(id, &fsmmodel.User{ID: id, KeyFrame: keyFrame})
+	r.users.Store(id, &tgfsm.User{ID: id, KeyFrame: keyFrame})
 	return nil
 }

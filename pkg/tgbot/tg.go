@@ -1,4 +1,4 @@
-package tg
+package tgbot
 
 import (
 	"context"
@@ -7,17 +7,17 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
-	tgfsm "github.com/sneiko/go-tgbuilder/pkg/fsm"
+	tgfsm "github.com/sneiko/go-tgbuilder/pkg/tgfsm"
 )
 
-// Bot is a tg bot
+// Bot is a tgbot bot
 type Bot struct {
 	bot *tgbotapi.BotAPI
 	fsm *tgfsm.Manager
 	ui  *Builder
 }
 
-// NewBot creates a new tg bot
+// NewBot creates a new tgbot bot
 func NewBot(token string, isDebug bool, ui *Builder, fsm *tgfsm.Manager) *Bot {
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
@@ -35,7 +35,7 @@ func NewBot(token string, isDebug bool, ui *Builder, fsm *tgfsm.Manager) *Bot {
 	}
 }
 
-// GetBot returns the tg bot
+// GetBot returns the tgbot bot
 func (b *Bot) GetBot() *tgbotapi.BotAPI { return b.bot }
 
 // Run starts the listen update for bot

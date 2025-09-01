@@ -1,14 +1,12 @@
-package fsm
+package tgfsm
 
 import (
 	"context"
-
-	"github.com/sneiko/go-tgbuilder/pkg/fsm/fsmmodel"
 )
 
 // Storage interface for implementation storage
 type Storage interface {
-	GetUser(ctx context.Context, id string) (*fsmmodel.User, error)
+	GetUser(ctx context.Context, id string) (*User, error)
 	SaveKeyFrame(ctx context.Context, id string, keyFrame string) error
 }
 
@@ -25,7 +23,7 @@ func New(storage Storage) *Manager {
 }
 
 // GetUser from db
-func (s *Manager) GetUser(ctx context.Context, id string) (*fsmmodel.User, error) {
+func (s *Manager) GetUser(ctx context.Context, id string) (*User, error) {
 	return s.storage.GetUser(ctx, id)
 }
 

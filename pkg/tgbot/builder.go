@@ -1,4 +1,4 @@
-package tg
+package tgbot
 
 // Builder is a ui/router builder
 type Builder struct {
